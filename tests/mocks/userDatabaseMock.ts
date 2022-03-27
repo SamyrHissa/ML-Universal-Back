@@ -29,7 +29,8 @@ export class UserDatabaseMock {
   }
   
   public async getAllUsers(): Promise<User[]> {
-     return [userNormalMock, userAdminMock];
+    return [userNormalMock, userAdminMock];
+     
   }
 
 }

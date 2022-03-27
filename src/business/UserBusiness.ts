@@ -111,12 +111,15 @@ export class UserBusiness {
       }
     }
     public async getAllUsers (token: string) {
-      try {        
+      try {
+        
+        
         const tokenData = this.tokenGenerator.verify(token);
         if(!tokenData || (tokenData.role !== "ADMIN")){
           throw new CustomError(422, "Token Unauthorized");
         }
-        const allUsers = this.userDatabase.getAllUsers();
+        const allUsers = await this.userDatabase.getAllUsers();
+        
         return allUsers  
       } catch (error) {
         throw new CustomError(error.statusCode, error.message);
