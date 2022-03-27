@@ -139,7 +139,7 @@ describe("Teste de profile", ()=>{
 describe("Testes do getAllUsers", ()=>{
   test("Erro de não autorizado", async ()=>{
     expect.assertions(2)
-    try {      
+    try {
       await userBusinessMock.getAllUsers("token_normal")
     } catch (error) {
       expect(error.statusCode).toBe(422);
@@ -149,10 +149,8 @@ describe("Testes do getAllUsers", ()=>{
   test("Resposta de sucesso", async ()=>{
     expect.assertions(1)
     try {
-      await jest.fn(() => {
-        userBusinessMock.getAllUsers("token_admin")
-      }) 
-      // expect(new TokenGeneratorMock().verify).toHaveBeenCalled()
+      await  userBusinessMock.getAllUsers("token_admin")
+      expect(new TokenGeneratorMock().verify).toHaveBeenCalled()
       expect(new UserDatabaseMock().getAllUsers).toHaveBeenCalled()
     } catch (error) {
       

@@ -5,7 +5,6 @@ import { productsTableName,
    suppliersTableName,
    adsTableName } from "./TableNames";
 import dotenv from 'dotenv'
-import pokemons from "./PokemonGo.json"
 
 dotenv.config()
 
@@ -25,7 +24,7 @@ export const migration = async () => {
    try {
      await connection.raw(`
          CREATE TABLE IF NOT EXISTS ${productsTableName}(
-            GUUID VARCHAR(64) PRIMARY KEY,
+            id VARCHAR(64) PRIMARY KEY,
             description VARCHAR(255) NOT NULL,
             SKU VARCHAR(255),
             Unit VARCHAR(255),
@@ -35,7 +34,7 @@ export const migration = async () => {
          );
 
          CREATE TABLE IF NOT EXISTS ${usersTableName}(
-            GUUID VARCHAR(64) PRIMARY KEY,
+            id VARCHAR(64) PRIMARY KEY,
             name VARCHAR(255),
             email VARCHAR(255) NOT NULL,
             password VARCHAR(64) NOT NULL,
@@ -43,7 +42,7 @@ export const migration = async () => {
          );
 
          CREATE TABLE IF NOT EXISTS ${clientsTableName}(
-            GUUID VARCHAR(64) PRIMARY KEY,
+            id VARCHAR(64) PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             id_MercadoLivre VARCHAR(255),
             email VARCHAR(255),
@@ -58,7 +57,7 @@ export const migration = async () => {
          );
 
          CREATE TABLE IF NOT EXISTS ${suppliersTableName}(
-            GUUID VARCHAR(64) PRIMARY KEY,
+            id VARCHAR(64) PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             email VARCHAR(255),
             CPF VARCHAR(10),
@@ -75,16 +74,16 @@ export const migration = async () => {
          CREATE TABLE IF NOT EXISTS ${adsTableName}(
             GUUID VARCHAR(64) PRIMARY KEY,
             description VARCHAR (255),
-            ID_product VARCHAR (64) NOT NULL,
+            id_product VARCHAR (64) NOT NULL,
             qty DECIMAL (15, 4) NOT NULL,
             price DECIMAL (15, 4) NOT NULL,
             status INTEGER,
             date_status TIMESTAMP,
-            ID_User VARCHAR(64) NOT NULL,
+            id_User VARCHAR(64) NOT NULL,
             date_create TIMESTAMP,
             date_update TIMESTAMP,
-            FOREIGN KEY(ID_product) REFERENCES ${productsTableName} (GUUID),
-            FOREIGN KEY(ID_User) REFERENCES ${usersTableName} (GUUID)
+            FOREIGN KEY(id_product) REFERENCES ${productsTableName} (id),
+            FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
          );
          
       `)

@@ -16,7 +16,6 @@ export class TokenGeneratorMock {
           role: USER_ROLES.NORMAL
         }
       case "token_admin":
-        console.log(token);
         return {
           id: "id_mock",
           role: USER_ROLES.ADMIN
