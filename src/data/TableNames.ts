@@ -1,0 +1,10 @@
+export const productsTableName = "PRODUCTS";  // produtos
+export const clientsTableName = "CLIENTS";  // clientes
+export const usersTableName = "USERS";  // usuários
+export const suppliersTableName = "SUPPLIERS";  // fornecedores
+export const adsTableName = "ADS";  //  anúncios
+export const salesTableName = "SALES";  // vendas
+export const itensSalesTableName = "ITENS_SALES";  // itens das vendas
+export const costCenterTableName = "COST_CENTER";  // centro de custo
+export const purchasesTableName = "PURCHASES";  // compras
+export const itensPurchasesTableName = "ITENS_PURCHASES";  // itens das compras

@@ -1,9 +1,10 @@
 import BaseDataBase from "./BaseDatabase";
 import { User } from "../model/User";
+import { usersTableName } from "./TableNames";
 
 export class UserDatabase extends BaseDataBase {
 
-   protected tableName: string = "INSIRA AQUI O NOME DA SUA TABELA DE USUÁRIOS";
+   protected tableName: string = usersTableName;
 
    private toModel(dbModel?: any): User | undefined {
       return (
