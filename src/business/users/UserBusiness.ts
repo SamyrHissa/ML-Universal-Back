@@ -1,9 +1,9 @@
-import { CustomError } from "../errors/CustomError";
-import { User, stringToUserRole } from "../model/User";
-import { UserDatabase } from "../data/UserDatabase";
-import { HashGenerator } from "../services/hashGenerator";
-import { IdGenerator } from "../services/idGenerator";
-import { TokenGenerator } from "../services/tokenGenerator";
+import { CustomError } from "../../errors/CustomError";
+import { User, stringToUserRole } from "../../model/User";
+import { UserDatabase } from "../../data/UserDatabase";
+import { HashGenerator } from "../../services/hashGenerator";
+import { IdGenerator } from "../../services/idGenerator";
+import { TokenGenerator } from "../../services/tokenGenerator";
 
 export class UserBusiness {
   constructor(

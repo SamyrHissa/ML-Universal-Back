@@ -28,6 +28,16 @@ export class User {
    public getRole(): USER_ROLES {
       return this.role;
    }
+
+   static toUserModel(data: any): User {
+      return new User(
+          data.id, 
+          data.name, 
+          data.email, 
+          data.password,
+          data.role
+          );
+   }
 }
 
 export const stringToUserRole = (input: string): USER_ROLES => {

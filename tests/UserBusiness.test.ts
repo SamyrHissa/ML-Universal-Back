@@ -1,4 +1,4 @@
-import { UserBusiness } from "../src/business/UserBusiness";
+import { UserBusiness } from "../src/business/users/UserBusiness";
 import { UserDatabase } from "../src/data/UserDatabase";
 import { TokenGenerator } from "../src/services/tokenGenerator";
 import { HashGeneratorMock } from "./mocks/hashGeneratorMock";
