@@ -13,13 +13,23 @@ export class ProductBusiness implements IProductsBusiness {
     ) {
 
     }
-    async insert(product: insertProductDTO, token: string): Promise<Product> {
+    insert = async (product: insertProductDTO, token: string): Promise<Product> => {
         try {
             const tokenValidation = this.tokenGenerator.verify(token);
             if(!tokenValidation || (tokenValidation.role !== "ADMIN")){
                 throw new CustomError(422, "Token Unauthorized");
             }
             const id = this.idGenerator.generate();
+            const new1Product = {
+                "id":id,
+                "description": product.description,
+                "SKU": product.SKU,
+                "unit": product.unit,
+                "price": product.price,
+                "Qty_Min": product.qty_Min,
+                "Qty_Max": product.qty_Max
+            }
+            const newProduct2 = Product.toProductModel(new1Product)
             const newProduct = new Product(id,
                 product.description,
                 product.SKU,
@@ -33,7 +43,7 @@ export class ProductBusiness implements IProductsBusiness {
             throw new CustomError(error.statusCode, error.message);
         }
     }
-    async update(product: Product, token: string): Promise<boolean> {
+    update = async (product: Product, token: string): Promise<boolean> => {
         return true
     }
     
