@@ -60,16 +60,16 @@ export class UserDatabase extends BaseDataBase {
 
    public async getAllUsers(): Promise<User[]> {
       try {
-        const result = await BaseDataBase.connection.raw(`
-            SELECT * from ${this.tableName}
-         `);
-        return result[0].map((res: any) => {
-          return this.toModel(res);
-        });
-      } catch (error) {
-        throw new Error(error.sqlMessage || error.message);
-      }
+         
+         const result = await BaseDataBase.connection.raw(`
+               SELECT * from ${this.tableName}
+            `);
+
+         return result[0].map((res: any) => {
+            return this.toModel(res);
+         });
+         } catch (error) {
+         throw new Error(error.sqlMessage || error.message);
+         }
    }
 }
-
-export default new UserDatabase()
