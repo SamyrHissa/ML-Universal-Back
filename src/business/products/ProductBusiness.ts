@@ -15,21 +15,22 @@ export class ProductBusiness implements IProductsBusiness {
     }
     insert = async (product: insertProductDTO, token: string): Promise<Product> => {
         try {
+            
             const tokenValidation = this.tokenGenerator.verify(token);
             if(!tokenValidation || (tokenValidation.role !== "ADMIN")){
-                throw new CustomError(422, "Token Unauthorized");
+                throw new CustomError(401, "Token Unauthorized");
+            }
+            
+            if((!product.description)||
+                (!product.SKU)||
+                (!product.unit)||
+                (!isNaN(Number(product.price)))||
+                (!isNaN(Number(product.qty_Min)))||
+                (!isNaN(Number(product.qty_Max)))){
+                    throw new CustomError(412, "Fields requered or falue!");
             }
             const id = this.idGenerator.generate();
-            const new1Product = {
-                "id":id,
-                "description": product.description,
-                "SKU": product.SKU,
-                "unit": product.unit,
-                "price": product.price,
-                "Qty_Min": product.qty_Min,
-                "Qty_Max": product.qty_Max
-            }
-            const newProduct2 = Product.toProductModel(new1Product)
+            
             const newProduct = new Product(id,
                 product.description,
                 product.SKU,
@@ -44,7 +45,31 @@ export class ProductBusiness implements IProductsBusiness {
         }
     }
     update = async (product: Product, token: string): Promise<boolean> => {
-        return true
+        try {
+            const tokenValidation = this.tokenGenerator.verify(token);
+            if(!tokenValidation || (tokenValidation.role !== "ADMIN")){
+                throw new CustomError(401, "Token Unauthorized");
+            }
+            
+            if((!product.getId())||
+                (!product.getDescription())||
+                (!product.getSKU())||
+                (!product.getUnit())||
+                (isNaN(Number(product.getPrice())))||
+                (isNaN(Number(product.getQty_Min())))||
+                (isNaN(Number(product.getQty_Max())))){
+                    throw new CustomError(412, "Fields requered or falue!");
+            }
+            const exist = await this.database.findById(product.getId());
+            
+            if(!exist){
+                throw new CustomError(404, "'id' not found!");
+            }
+            return await this.database.update(product);
+           
+        } catch (error) {
+            throw new CustomError(error.statusCode, error.message);
+        }
     }
     
 }

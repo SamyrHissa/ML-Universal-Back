@@ -5,3 +5,4 @@ export const productRouter = express.Router();
 const productsController = new ProductsController();
 
 productRouter.post("/insert", productsController.insert);
+productRouter.post("/update", productsController.update);
