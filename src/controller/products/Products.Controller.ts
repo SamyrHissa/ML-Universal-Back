@@ -59,4 +59,18 @@ export class ProductsController {
             res.status(statusCode || 400).send({ message });
         }
     }
+    delete = async (req: Request, res: Response) => {
+        try {
+            const id: string = req.params.id;
+            const token: string = String(req.headers.authorization);
+            if(await this.productsBusiness.delete(id, token)){
+                res.status(200).send("Product deleted!")
+            } else {
+                res.status(412).send("Product not deleted!")
+            }
+        } catch (error) {
+            const { statusCode, message } = error;
+            res.status(statusCode || 400).send({ message });
+        }
+    }
 }

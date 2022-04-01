@@ -6,3 +6,4 @@ const productsController = new ProductsController();
 
 productRouter.post("/insert", productsController.insert);
 productRouter.post("/update", productsController.update);
+productRouter.delete("/delete/:id", productsController.update);

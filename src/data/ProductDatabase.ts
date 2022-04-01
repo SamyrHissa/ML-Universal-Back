@@ -38,7 +38,7 @@ export class ProductDatabase extends BaseDataBase {
             throw new Error(error.sqlMessage || error.message);
         }
     }
-    async update(product: Product): Promise<boolean> {
+    async update(product: Product): Promise<void> {
         try {
             const result = await BaseDataBase.connection(this.tableName)
             .update({
@@ -50,9 +50,18 @@ export class ProductDatabase extends BaseDataBase {
                 "Qty_Max": product.getQty_Max()
             })
             .where("id", product.getId())
-        return true
+        // return true
         } catch (error) {
-        throw new Error(error.sqlMessage || error.message);
+            throw new Error(error.sqlMessage || error.message);
+        }
+    }
+    async delete(id: string) {
+        try {
+            await BaseDataBase.connection.raw(`
+            DELETE FROM ${this.tableName} WHERE id = "${id}"
+            `)
+        } catch (error) {
+            throw new Error(error.sqlMessage || error.message);
         }
     }
 }

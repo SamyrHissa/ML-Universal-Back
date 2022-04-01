@@ -65,8 +65,25 @@ export class ProductBusiness implements IProductsBusiness {
             if(!exist){
                 throw new CustomError(404, "'id' not found!");
             }
-            return await this.database.update(product);
-           
+            await this.database.update(product);
+            return true
+        } catch (error) {
+            throw new CustomError(error.statusCode, error.message);
+        }
+    }
+    delete = async (id:string, token: string): Promise<boolean> => {
+        try {
+            const tokenValidation = this.tokenGenerator.verify(token);
+            if(!tokenValidation || (tokenValidation.role !== "ADMIN")){
+                throw new CustomError(401, "Token Unauthorized");
+            }
+            const exist = await this.database.findById(id);
+            
+            if(!exist){
+                throw new CustomError(404, "'id' not found!");
+            }
+            await this.database.delete(id);
+            return true
         } catch (error) {
             throw new CustomError(error.statusCode, error.message);
         }
