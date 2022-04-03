@@ -23,24 +23,37 @@ const connection = knex({
 export const migration = async () => {
    try {
      await connection.raw(`
+      CREATE TABLE IF NOT EXISTS ${usersTableName}(
+         id VARCHAR(64) PRIMARY KEY,
+         name VARCHAR(255),
+         email VARCHAR(255) NOT NULL,
+         password VARCHAR(64) NOT NULL,
+         role VARCHAR(255) NOT NULL DEFAULT "NORMAL",
+         status INTEGER,
+         date_status TIMESTAMP,
+         id_User VARCHAR(64) NOT NULL,
+         date_create TIMESTAMP,
+         date_update TIMESTAMP,
+         FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
+      );
+
          CREATE TABLE IF NOT EXISTS ${productsTableName}(
             id VARCHAR(64) PRIMARY KEY,
             description VARCHAR(255) NOT NULL,
             SKU VARCHAR(255),
-            Unit VARCHAR(255),
-            Price DECIMAL(15, 4),
-            Qty_Min DECIMAL(15, 4),
-            Qty_Max DECIMAL(15, 4)
+            unit VARCHAR(255),
+            price DECIMAL(15, 4),
+            qty_Min DECIMAL(15, 4),
+            qty_Max DECIMAL(15, 4),
+            status INTEGER,
+            date_Status TIMESTAMP,
+            id_User VARCHAR(64) NOT NULL,
+            date_Create TIMESTAMP,
+            date_Update TIMESTAMP,
+            FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
          );
 
-         CREATE TABLE IF NOT EXISTS ${usersTableName}(
-            id VARCHAR(64) PRIMARY KEY,
-            name VARCHAR(255),
-            email VARCHAR(255) NOT NULL,
-            password VARCHAR(64) NOT NULL,
-            role VARCHAR(255) NOT NULL DEFAULT "NORMAL"
-         );
-
+         
          CREATE TABLE IF NOT EXISTS ${clientsTableName}(
             id VARCHAR(64) PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
@@ -53,7 +66,13 @@ export const migration = async () => {
             number VARCHAR(5),
             complemento VARCHAR(255),
             bairro VARCHAR(50),
-            city VARCHAR(50)
+            city VARCHAR(50),
+            status INTEGER,
+            date_status TIMESTAMP,
+            id_User VARCHAR(64) NOT NULL,
+            date_create TIMESTAMP,
+            date_update TIMESTAMP,
+            FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
          );
 
          CREATE TABLE IF NOT EXISTS ${suppliersTableName}(
@@ -68,7 +87,13 @@ export const migration = async () => {
             number VARCHAR(5),
             complemento VARCHAR(255),
             bairro VARCHAR(50),
-            city VARCHAR(50)
+            city VARCHAR(50),
+            status INTEGER,
+            date_status TIMESTAMP,
+            id_User VARCHAR(64) NOT NULL,
+            date_create TIMESTAMP,
+            date_update TIMESTAMP,
+            FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
          );
 
          CREATE TABLE IF NOT EXISTS ${adsTableName}(

@@ -1,4 +1,4 @@
-import { USER_ROLES } from "../../src/model/User";
+import { USER_ROLES } from "../../src/model/users/User.model";
 import { AuthenticationData } from "../../src/services/tokenGenerator";
 
 export class TokenGeneratorMock {
