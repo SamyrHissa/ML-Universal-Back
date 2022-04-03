@@ -1,11 +1,40 @@
-import { Product } from "../model/Products";
+import { insertProductDTI } from "../model/products/Products.interface";
+import { ProductModel } from "../model/products/Products.model";
 import BaseDataBase from "./BaseDatabase";
 import { productsTableName } from "./TableNames";
 
 export class ProductDatabase extends BaseDataBase {
     protected tableName: string = productsTableName;
+    
+    async insert(product: insertProductDTI): Promise<void> {
+        try {
+            await BaseDataBase.connection(this.tableName)
+            .insert(product);
+        } catch (error) {
+            throw new Error(error.sqlMessage || error.message);
+        }
+    }
+    async update(product: ProductModel): Promise<void> {
+        try {
+            await BaseDataBase.connection(this.tableName)
+                .update(ProductModel.toProductDTI(product))
+                .where("id", product.getId())
+        } catch (error) {
+            throw new Error(error.sqlMessage || error.message);
+        }
+    }
 
-    async findById(id: string): Promise<Product|undefined>{
+    async delete(id: string) {
+        try {
+            await BaseDataBase.connection.raw(`
+            DELETE FROM ${this.tableName} WHERE id = "${id}"
+            `)
+        } catch (error) {
+            throw new Error(error.sqlMessage || error.message);
+        }
+    }
+
+    async findById(id: string): Promise<ProductModel|undefined>{
         try {
             const result = await BaseDataBase.connection.raw(`
                 SELECT * FROM ${this.tableName} WHERE id = "${id}"
@@ -13,7 +42,8 @@ export class ProductDatabase extends BaseDataBase {
             
             const product = result[0][0];
             if(product){
-                return new Product(product.id, product.description, product.sku, product.unit, product.price, product.qty_min, product.qty_max)
+                const result1 = ProductModel.toProductModel(product);
+                return result1
             } else {
                 return undefined
             }
@@ -21,38 +51,19 @@ export class ProductDatabase extends BaseDataBase {
             throw new Error(error.sqlMessage || error.message);
         }
     }
-    async insert(product: Product): Promise<void> {
+
+    async getAll(): Promise<ProductModel[]> {
         try {
-        const new1Product = {
-            "id": product.getId(),
-            "description": product.getDescription(),
-            "SKU": product.getSKU(),
-            "Unit": product.getUnit(),
-            "Price": product.getPrice(),
-            "Qty_Min": product.getQty_Min(),
-            "Qty_Max": product.getQty_Max()
-        }
-            await BaseDataBase.connection(this.tableName)
-            .insert(new1Product);
-        } catch (error) {
-            throw new Error(error.sqlMessage || error.message);
-        }
-    }
-    async update(product: Product): Promise<boolean> {
-        try {
-            const result = await BaseDataBase.connection(this.tableName)
-            .update({
-                "description": product.getDescription(),
-                "SKU": product.getSKU(),
-                "Unit": product.getUnit(),
-                "Price": product.getPrice(),
-                "Qty_Min": product.getQty_Min(),
-                "Qty_Max": product.getQty_Max()
-            })
-            .where("id", product.getId())
-        return true
-        } catch (error) {
-        throw new Error(error.sqlMessage || error.message);
-        }
-    }
+           
+           const result = await BaseDataBase.connection.raw(`
+                 SELECT * from ${this.tableName}
+              `);
+  
+           return result[0].map((res: any) => {
+              return ProductModel.toProductModel(res);
+           });
+           } catch (error) {
+           throw new Error(error.sqlMessage || error.message);
+           }
+     }
 }

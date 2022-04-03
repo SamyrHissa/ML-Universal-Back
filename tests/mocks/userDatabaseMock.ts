@@ -1,4 +1,4 @@
-import { User } from "../../src/model/User";
+import { User } from "../../src/model/users/User.model";
 import { userAdminMock, userNormalMock } from "./userMock";
 
 export class UserDatabaseMock {

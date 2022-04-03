@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { UserBusiness } from "../../business/users/UserBusiness";
 import { UserDatabase } from "../../data/UserDatabase";
+import { updateUserDTO } from "../../model/users/User.Interfaces";
+import { stringToUserRole } from "../../model/users/User.model";
 import { HashGenerator } from "../../services/hashGenerator";
 import { IdGenerator } from "../../services/idGenerator";
 import { TokenGenerator } from "../../services/tokenGenerator";
@@ -19,14 +21,41 @@ export default class UserController {
 
   signup = async (req: Request, res: Response) => {
     try {
-      const { name, role, email, password } = req.body;
-      const result = await this.userBusiness.signup(name, email, password, role);
+      const { name, email, password, role } = req.body;
+      const newUser = {
+        "name": name,
+        "email": email,
+        "password": password,
+        "role": stringToUserRole(role)
+      }
+      
+      const result = await this.userBusiness.signup(newUser);
+      
       res.status(200).send(result);
     } catch (error) {
       const { statusCode, message } = error;
       res.status(statusCode || 400).send({ message });
     }
   }
+  
+  update = async (req: Request, res: Response) => {
+    try {
+      const { name, password, role } = req.body;
+      const id = req.params.id;
+      const token: string = String(req.headers.authorization);
+      const user: updateUserDTO = {
+        name,
+        password,
+        role
+      }
+      await this.userBusiness.update(user, id, token)
+      res.status(200).send("Data Updated!")
+    } catch (error) {
+      const { statusCode, message } = error;
+      res.status(statusCode || 400).send({ message });
+    }
+  };
+  delete = async (req: Request, res: Response) => {};
 
   login = async (req: Request, res: Response) => {
     try {

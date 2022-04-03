@@ -1,6 +1,7 @@
 import { ProductDatabase } from "../../data/ProductDatabase";
 import { CustomError } from "../../errors/CustomError";
-import { insertProductDTO, Product } from "../../model/Products";
+import { insertProductDTO, insertProductDTI } from "../../model/products/Products.interface";
+import { ProductModel } from "../../model/products/Products.model";
 import { IdGenerator } from "../../services/idGenerator";
 import { TokenGenerator } from "../../services/tokenGenerator";
 import { IProductsBusiness } from "./Products.Business.Iterface";
@@ -13,42 +14,55 @@ export class ProductBusiness implements IProductsBusiness {
     ) {
 
     }
-    insert = async (product: insertProductDTO, token: string): Promise<Product> => {
+    insert = async (product: insertProductDTO, token: string): Promise<ProductModel> => {
         try {
             
-            const tokenValidation = this.tokenGenerator.verify(token);
-            if(!tokenValidation || (tokenValidation.role !== "ADMIN")){
+            const tokenValidation = this.tokenGenerator.getTokenData(token);
+            if(!tokenValidation){
                 throw new CustomError(401, "Token Unauthorized");
+            }
+            if(tokenValidation.role !== "ADMIN"){
+                throw new CustomError(401, "You are not authorized for this action");
             }
             
             if((!product.description)||
                 (!product.SKU)||
                 (!product.unit)||
-                (!isNaN(Number(product.price)))||
-                (!isNaN(Number(product.qty_Min)))||
-                (!isNaN(Number(product.qty_Max)))){
+                (isNaN(Number(product.price)))||
+                (isNaN(Number(product.qty_Min)))||
+                (isNaN(Number(product.qty_Max)))){
                     throw new CustomError(412, "Fields requered or falue!");
             }
             const id = this.idGenerator.generate();
             
-            const newProduct = new Product(id,
-                product.description,
-                product.SKU,
-                product.unit,
-                product.price,
-                product.qty_Min,
-                product.qty_Max);
-            await this.database.insert(newProduct)
-            return newProduct
+            const newProduct: insertProductDTI = {
+                id: id,
+                description: product.description,
+                SKU: product.SKU,
+                unit: product.unit,
+                price: product.price,
+                qty_Min: product.qty_Min,
+                qty_Max: product.qty_Max,
+                status: 0, 
+                date_Status: new Date(), 
+                id_User: tokenValidation.id, 
+                date_Create: new Date(),
+                date_Update: new Date()
+            };
+            await this.database.insert(newProduct);
+            return ProductModel.toProductModel(newProduct);
         } catch (error) {
             throw new CustomError(error.statusCode, error.message);
         }
     }
-    update = async (product: Product, token: string): Promise<boolean> => {
+    update = async (product: ProductModel, token: string): Promise<boolean> => {
         try {
-            const tokenValidation = this.tokenGenerator.verify(token);
-            if(!tokenValidation || (tokenValidation.role !== "ADMIN")){
+            const tokenValidation = this.tokenGenerator.getTokenData(token);
+            if(!tokenValidation){
                 throw new CustomError(401, "Token Unauthorized");
+            }
+            if(tokenValidation.role !== "ADMIN"){
+                throw new CustomError(401, "You are not authorized for this action");
             }
             
             if((!product.getId())||
@@ -65,10 +79,56 @@ export class ProductBusiness implements IProductsBusiness {
             if(!exist){
                 throw new CustomError(404, "'id' not found!");
             }
-            return await this.database.update(product);
-           
+            
+            exist.setDescription(product.getDescription());
+            exist.setSKU(product.getSKU());
+            exist.setUnit(product.getUnit());
+            exist.setPrice(product.getPrice());
+            exist.setQty_Min(product.getQty_Min());
+            exist.setQty_Max(product.getQty_Max());
+            exist.setId_User(tokenValidation.id);
+            exist.setDate_Update(new Date());
+            
+            await this.database.update(exist);
+            
+            return true
         } catch (error) {
             throw new CustomError(error.statusCode, error.message);
+        }
+    }
+    delete = async (id:string, token: string): Promise<boolean> => {
+        try {
+            const tokenValidation = this.tokenGenerator.getTokenData(token);
+            if(!tokenValidation){
+                throw new CustomError(401, "Token Unauthorized");
+            }
+            if(tokenValidation.role !== "ADMIN"){
+                throw new CustomError(401, "You are not authorized for this action");
+            }
+            const exist = await this.database.findById(id);
+            
+            if(!exist){
+                throw new CustomError(404, "'id' not found!");
+            }
+            await this.database.delete(id);
+            return true
+        } catch (error) {
+            throw new CustomError(error.statusCode, error.message);
+        }
+    }
+    getAll = async (token: string): Promise<ProductModel[]> => {
+        try {
+            
+            // const tokenValidation = this.tokenGenerator.verify(token);
+            const tokenValidation = this.tokenGenerator.getTokenData(token);
+            
+            if(!tokenValidation){
+                throw new CustomError(401, "Token Unauthorized");
+            }
+            const result = await this.database.getAll();
+            return result
+        } catch (error) {
+            throw new CustomError(error.statusCode, error.message)
         }
     }
     
