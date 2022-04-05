@@ -5,6 +5,7 @@ export interface IProductsBusiness {
     insert(product: insertProductDTO, token: string): Promise<ProductModel>;
     update(product: ProductModel, token: String): Promise<boolean>;
     delete(id:string, token: string): Promise<boolean>;
+    findById(id:string, token: string): Promise<ProductModel>;
     getAll(token: string): Promise<ProductModel[]>;
 }
 

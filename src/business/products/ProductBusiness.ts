@@ -89,9 +89,12 @@ export class ProductBusiness implements IProductsBusiness {
             exist.setId_User(tokenValidation.id);
             exist.setDate_Update(new Date());
             
-            await this.database.update(exist);
+            if(await this.database.update(exist)){
+                return true
+            } else {
+                return false
+            };
             
-            return true
         } catch (error) {
             throw new CustomError(error.statusCode, error.message);
         }
@@ -110,8 +113,30 @@ export class ProductBusiness implements IProductsBusiness {
             if(!exist){
                 throw new CustomError(404, "'id' not found!");
             }
-            await this.database.delete(id);
-            return true
+            if(await this.database.delete(id)) {
+                return true
+            } else {
+                return false
+            };
+        } catch (error) {
+            throw new CustomError(error.statusCode, error.message);
+        }
+    }
+    findById = async (id:string, token: string): Promise<ProductModel> => {
+        try {
+            const tokenValidation = this.tokenGenerator.getTokenData(token);
+            if(!tokenValidation){
+                throw new CustomError(401, "Token Unauthorized");
+            }
+            if(tokenValidation.role !== "ADMIN"){
+                throw new CustomError(401, "You are not authorized for this action");
+            }
+            const exist = await this.database.findById(id);
+            
+            if(!exist){
+                throw new CustomError(404, "'id' not found!");
+            }
+            return exist
         } catch (error) {
             throw new CustomError(error.statusCode, error.message);
         }

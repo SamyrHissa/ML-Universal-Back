@@ -14,21 +14,23 @@ export class ProductDatabase extends BaseDataBase {
             throw new Error(error.sqlMessage || error.message);
         }
     }
-    async update(product: ProductModel): Promise<void> {
+    async update(product: ProductModel): Promise<boolean> {
         try {
             await BaseDataBase.connection(this.tableName)
                 .update(ProductModel.toProductDTI(product))
-                .where("id", product.getId())
+                .where("id", product.getId());
+            return true
         } catch (error) {
             throw new Error(error.sqlMessage || error.message);
         }
     }
 
-    async delete(id: string) {
+    async delete(id: string): Promise<boolean> {
         try {
             await BaseDataBase.connection.raw(`
-            DELETE FROM ${this.tableName} WHERE id = "${id}"
-            `)
+                DELETE FROM ${this.tableName} WHERE id = "${id}"
+            `);
+            return true
         } catch (error) {
             throw new Error(error.sqlMessage || error.message);
         }

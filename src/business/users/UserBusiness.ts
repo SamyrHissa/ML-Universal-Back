@@ -54,7 +54,7 @@ export class UserBusiness implements UsersBusinessInterface {
 
   }
 
-  update = async (user: updateUserDTO, id: string, token: string): Promise<void> => {
+  update = async (user: updateUserDTO, id: string, token: string): Promise<boolean> => {
     try {
       if((!user.name) || (!user.role) || !id){
         throw new CustomError(422, "Missing input");
@@ -72,16 +72,38 @@ export class UserBusiness implements UsersBusinessInterface {
       }
       userUp.name = user.name;
       userUp.role = stringToUserRole(user.role);
-      await this.userDatabase.update(userUp)
+      if(await this.userDatabase.update(userUp)){
+        return true
+      } else {
+        return false
+      }
     } catch (error) {
-      
+      throw new CustomError(error.statusCode, error.message);
     }
   };
-  delete = async (id: string, token: string): Promise<void> => {
+  delete = async (id: string, token: string): Promise<boolean> => {
     try {
-      
+      if(!id){
+        throw new CustomError(422, "Missing input");
+      };
+      const userDel = await this.userDatabase.getUserById2(id);
+      if(!userDel){
+        throw new CustomError(404, "'id' not found!")
+      }
+      const accessToken = this.tokenGenerator.getTokenData(token);
+      if(!accessToken){
+        throw new CustomError(401, "Token Unauthorized");
+      }
+      if(accessToken.role !== "ADMIN"){
+        throw new CustomError(401, "You are not authorized for this action");
+      }
+      if(await this.userDatabase.delete(id)){
+        return true
+      } else {
+        return false
+      };
     } catch (error) {
-      
+      throw new CustomError(error.statusCode, error.message);
     }
   };
 

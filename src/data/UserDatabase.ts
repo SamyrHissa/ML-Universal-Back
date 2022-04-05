@@ -51,20 +51,22 @@ export class UserDatabase extends BaseDataBase {
          throw new Error(error.sqlMessage || error.message)
       }
    }
-   async update(user: userDTI): Promise<void> {
+   async update(user: userDTI): Promise<boolean> {
       try {
          await BaseDataBase.connection(this.tableName)
             .update(user)
-            .where(`id`, user.id)
+            .where(`id`, user.id);
+         return true;
       } catch (error) {
           throw new Error(error.sqlMessage || error.message);
       }
    }
-  async delete(id: string) {
+  async delete(id: string): Promise<boolean> {
       try {
          await BaseDataBase.connection.raw(`
-         DELETE FROM ${this.tableName} WHERE id = "${id}"
-         `)
+               DELETE FROM ${this.tableName} WHERE id = "${id}"
+            `);
+         return true;
       } catch (error) {
          throw new Error(error.sqlMessage || error.message);
       }

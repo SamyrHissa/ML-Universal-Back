@@ -48,14 +48,30 @@ export default class UserController {
         password,
         role
       }
-      await this.userBusiness.update(user, id, token)
-      res.status(200).send("Data Updated!")
+      if(await this.userBusiness.update(user, id, token)){
+        res.status(200).send("Data Updated!")
+      } else {
+          res.status(412).send("Data not Updated!")
+      };
     } catch (error) {
       const { statusCode, message } = error;
       res.status(statusCode || 400).send({ message });
     }
   };
-  delete = async (req: Request, res: Response) => {};
+  delete = async (req: Request, res: Response) => {
+    try {
+      const id = req.params.id;
+      const token: string = String(req.headers.authorization);
+      if(await this.userBusiness.delete(id, token)){
+        res.status(200).send("Data Updated!")
+      } else {
+          res.status(412).send("Data not Updated!")
+      }
+    } catch (error) {
+      const { statusCode, message } = error;
+      res.status(statusCode || 400).send({ message });
+    }
+  };
 
   login = async (req: Request, res: Response) => {
     try {
