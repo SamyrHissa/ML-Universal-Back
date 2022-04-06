@@ -28,7 +28,6 @@ export class ProductsController {
                 qty_Min: qty_min,
                 qty_Max: qty_max
             }, token)
-            console.log("result", result);
             
             res.status(200).send(result);
         } catch (error) {
