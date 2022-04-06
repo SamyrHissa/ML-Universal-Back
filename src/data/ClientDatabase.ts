@@ -72,4 +72,23 @@ export class ClientDatabase extends BaseDataBase {
             throw new Error(error.sqlMessage || error.message);
         }
     }
+    async findById(id: string): Promise<ClienteModel> {
+        try {
+            const result = await BaseDataBase.connection(this.tableName)
+                .select()
+                .where("id", id);
+            return ClienteModel.toClientModel(result[0]);
+        } catch (error) {
+            throw new Error(error.sqlMessage || error.message)
+        }
+    }
+    async getAll(): Promise<ClienteModel[]> {
+        try {
+            const result = await BaseDataBase.connection(this.tableName)
+                .select();
+            return result.map((client)=>ClienteModel.toClientModel(client));
+        } catch (error) {
+            throw new Error(error.sqlMessage || error.message)
+        }
+    }
 }

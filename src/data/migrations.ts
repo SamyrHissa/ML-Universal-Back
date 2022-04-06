@@ -22,20 +22,20 @@ const connection = knex({
 
 export const migration = async () => {
    try {
-     await connection.raw(`
-      CREATE TABLE IF NOT EXISTS ${usersTableName}(
-         id VARCHAR(64) PRIMARY KEY,
-         name VARCHAR(255),
-         email VARCHAR(255) NOT NULL,
-         password VARCHAR(64) NOT NULL,
-         role VARCHAR(255) NOT NULL DEFAULT "NORMAL",
-         status INTEGER,
-         date_status TIMESTAMP,
-         id_User VARCHAR(64) NOT NULL,
-         date_create TIMESTAMP,
-         date_update TIMESTAMP,
-         FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
-      );
+      await connection.raw(`
+         CREATE TABLE IF NOT EXISTS ${usersTableName}(
+            id VARCHAR(64) PRIMARY KEY,
+            name VARCHAR(255),
+            email VARCHAR(255) NOT NULL,
+            password VARCHAR(64) NOT NULL,
+            role VARCHAR(255) NOT NULL DEFAULT "NORMAL",
+            status INTEGER,
+            date_status TIMESTAMP,
+            id_User VARCHAR(64) NOT NULL,
+            date_create TIMESTAMP,
+            date_update TIMESTAMP,
+            FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
+         );
 
          CREATE TABLE IF NOT EXISTS ${productsTableName}(
             id VARCHAR(64) PRIMARY KEY,
