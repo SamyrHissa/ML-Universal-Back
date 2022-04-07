@@ -41,7 +41,7 @@ export class ClientBusiness implements IClietsBusiness {
             throw new CustomError(error.statusCode, error.message);
         }
     };
-    update = async (client: ClienteModel, token: string): Promise<boolean> => {
+    update = async (client: insertClientDTO, id: string,  token: string): Promise<boolean> => {
         try {
             const tokenValidation = this.tokenGenerator.getTokenData(token);
             if(!tokenValidation){
@@ -50,18 +50,20 @@ export class ClientBusiness implements IClietsBusiness {
             if(tokenValidation.role !== "ADMIN"){
                 throw new CustomError(401, "You are not authorized for this action");
             }
-            if((!client.getAddress())||(!client.getBairro())||(!client.getCEP())
-                ||(!client.getCPF())||(!client.getCity())||(!client.getComplemento())
-                ||(!client.getDate_Update())||(!client.getEmail())
-                ||(!client.getId())||(!client.getId_MercadoLivre())
-                ||(!client.getName())||(!client.getNumber())||(!client.getTelephone())){
+            if((!client.address)||(!client.bairro)||(!client.CEP)
+                ||(!client.CPF)||(!client.city)||(!client.complemento)
+                ||(!client.email)||(!client.id_MercadoLivre)
+                ||(!client.name)||(!client.number)||(!client.telephone)){
                     throw new CustomError(412, "Fields requered or falue!");
                 }
-            const existClient = await this.database.findById(client.getId());
+            const existClient = await this.database.findById(id);
             if(!existClient){
                 throw new CustomError(404, "'id' not found!")
             }
-            const result = await this.database.insert(ClienteModel.toClientDTI(client));
+            const ClientUP = ClienteModel.toClientModel(client);
+            ClientUP.setId(id);
+            ClientUP.setId_User(tokenValidation.id)
+            const result = await this.database.update(ClientUP);
             return true;
         } catch (error) {
             throw new CustomError(error.statusCode, error.message);
