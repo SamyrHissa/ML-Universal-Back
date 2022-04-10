@@ -114,7 +114,7 @@ export class UserDatabase extends BaseDataBase {
          const result = await BaseDataBase.connection.raw(`
                SELECT * from ${this.tableName}
             `);
-
+         
          return result[0].map((res: any) => {
             return UserModel.toUserModel(res);
          });

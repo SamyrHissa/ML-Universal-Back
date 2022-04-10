@@ -76,7 +76,7 @@ export class ClienteModel {
             data.date_Update
         )
     }
-    static toClientDTI(data: any): insertClientDTI {
+    static toClientDTI(data: any): insertClientDTI{
         return {
             id: data.id,
             name: data.name,

@@ -55,7 +55,7 @@ export class ProductBusiness implements IProductsBusiness {
             throw new CustomError(error.statusCode, error.message);
         }
     }
-    update = async (product: ProductModel, token: string): Promise<boolean> => {
+    update = async (id: string, product: insertProductDTO, token: string): Promise<boolean> => {
         try {
             const tokenValidation = this.tokenGenerator.getTokenData(token);
             if(!tokenValidation){
@@ -65,27 +65,26 @@ export class ProductBusiness implements IProductsBusiness {
                 throw new CustomError(401, "You are not authorized for this action");
             }
             
-            if((!product.getId())||
-                (!product.getDescription())||
-                (!product.getSKU())||
-                (!product.getUnit())||
-                (isNaN(Number(product.getPrice())))||
-                (isNaN(Number(product.getQty_Min())))||
-                (isNaN(Number(product.getQty_Max())))){
+            if( (!product.description)||
+                (!product.SKU)||
+                (!product.unit)||
+                (isNaN(Number(product.price)))||
+                (isNaN(Number(product.qty_Min)))||
+                (isNaN(Number(product.qty_Max)))){
                     throw new CustomError(412, "Fields requered or falue!");
             }
-            const exist = await this.database.findById(product.getId());
+            const exist = await this.database.findById(id);
             
             if(!exist){
                 throw new CustomError(404, "'id' not found!");
             }
             
-            exist.setDescription(product.getDescription());
-            exist.setSKU(product.getSKU());
-            exist.setUnit(product.getUnit());
-            exist.setPrice(product.getPrice());
-            exist.setQty_Min(product.getQty_Min());
-            exist.setQty_Max(product.getQty_Max());
+            exist.setDescription(product.description);
+            exist.setSKU(product.SKU);
+            exist.setUnit(product.unit);
+            exist.setPrice(product.price);
+            exist.setQty_Min(product.qty_Min);
+            exist.setQty_Max(product.qty_Max);
             exist.setId_User(tokenValidation.id);
             exist.setDate_Update(new Date());
             

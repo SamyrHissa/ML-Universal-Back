@@ -6,7 +6,7 @@ import { IdGenerator } from "../../services/idGenerator";
 import { TokenGenerator } from "../../services/tokenGenerator";
 import { UsersBusinessInterface } from "./Users.Business.Interface";
 import { toAuthenticationData } from "../../types";
-import { inputSignUpDTO, updateUserDTO } from "../../model/users/User.Interfaces"
+import { inputSignUpDTO, updateUserDTO, userDTI } from "../../model/users/User.Interfaces"
 
 export class UserBusiness implements UsersBusinessInterface {
   
@@ -53,6 +53,32 @@ export class UserBusiness implements UsersBusinessInterface {
     }
 
   }
+  insert = async (user: inputSignUpDTO, token: string): Promise<UserModel> => {
+    if (!user.name || !user.email || !user.password || !user.role) {
+      throw new CustomError(422, "Missing input");
+    }
+
+    if (user.email.indexOf("@") === -1) {
+      throw new CustomError(422, "Invalid email");
+    }
+    if(await this.userDatabase.getUserByEmail(user.email)){
+      throw new CustomError(409, "Email already in use");
+    }
+
+    if (user.password.length < 6) {
+      throw new CustomError(422, "Invalid password");
+    }
+    const id = this.idGenerator.generate(); 
+
+    const cypherPassword = await this.hashGenerator.hash(user.password);
+    const newUser = new UserModel(id, user.name, user.email, 
+                      cypherPassword, stringToUserRole(user.role),
+                      0, new Date(), id, new Date(), new Date())
+    
+    await this.userDatabase.createUser(newUser);
+    return newUser
+
+  };
 
   update = async (user: updateUserDTO, id: string, token: string): Promise<boolean> => {
     try {
@@ -131,13 +157,13 @@ export class UserBusiness implements UsersBusinessInterface {
 
       const accessToken = this.tokenGenerator.generateToken(toAuthenticationData(user.getId(), stringToUserRole(user.getRole())));
 
-      return { accessToken };
+      return { user, accessToken };
     } catch (error) {
       throw new CustomError(error.statusCode, error.message);
     }
   }
   
-  profile = async (id: string, token: string) => {
+  profile = async (id: string, token: string): Promise<userDTI> => {
     try {
       if(!id){
         throw new CustomError(422, "Missing input");
@@ -146,7 +172,7 @@ export class UserBusiness implements UsersBusinessInterface {
       if(!tokenData){
         throw new CustomError(401, "Token Unauthorized");
       }
-      const user = await this.userDatabase.getUserById(id);
+      const user = await this.userDatabase.getUserById2(id);
       
       if (!user) {
         throw new CustomError(404, "'id' not found");
@@ -159,7 +185,6 @@ export class UserBusiness implements UsersBusinessInterface {
   }
   getAllUsers = async (token: string) => {
     try {
-      
       const tokenData = this.tokenGenerator.getTokenData(token);
 
       if(!tokenData || (tokenData.role !== "ADMIN")){
