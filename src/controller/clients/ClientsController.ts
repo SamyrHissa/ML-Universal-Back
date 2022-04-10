@@ -4,6 +4,7 @@ import { ClientDatabase } from "../../data/ClientDatabase";
 import { ClienteModel } from "../../model/clients/Client.Model";
 import { IdGenerator } from "../../services/idGenerator";
 import { TokenGenerator } from "../../services/tokenGenerator";
+import { toAuthenticationData } from "../../types";
 
 export class ClientsController {
     private clientsBusiness : ClientBusiness;
@@ -68,7 +69,8 @@ export class ClientsController {
                 const clientUP = {
                     name, id_MercadoLivre, email, CPF, telephone, CEP, address, number, complemento, bairro,city
                 }
-            if(await this.clientsBusiness.update(clientUP, id, token)){
+            const result = await this.clientsBusiness.update(clientUP, id, token);
+            if(result){
                 res.status(200).send("Data updated!");
             } else {
                 res.status(400).send("Data not updated!");
@@ -76,6 +78,37 @@ export class ClientsController {
             
         } catch (error) {
             const { statusCode, message } = error;
+            res.status(statusCode || 400).send({message});
+        }
+    }
+    delete = async (req: Request, res: Response) => {
+        try {
+            const id = req.params.id;
+            const token: string = String(req.headers.authorization);
+            if(await this.clientsBusiness.delete(id, token)){
+                res.status(200).send("Data deleted!")
+            } else {
+                res.status(412).send("Data not deleted//1")
+            }
+
+        } catch (error) {
+            const { statusCode, message } = error;
+            res.status(statusCode || 400).send({message});
+        }
+    }
+    find = async (req: Request, res: Response) => {
+        try {
+            const id = req.params.id;
+            
+            const token: string = String(req.headers.authorization);
+            const result = await this.clientsBusiness.findById(id, token)
+            if(result){
+                res.status(201).send(result)
+            } else {
+                res.status(412).send("'id' not found!")
+            }
+        } catch (error) {
+            const { statusCode, message} = error;
             res.status(statusCode || 400).send({message});
         }
     }

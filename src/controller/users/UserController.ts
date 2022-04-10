@@ -37,7 +37,25 @@ export default class UserController {
       res.status(statusCode || 400).send({ message });
     }
   }
-  
+  insert = async (req: Request, res: Response) => {
+    try {
+      const { name, email, password, role } = req.body;
+      const newUser = {
+        "name": name,
+        "email": email,
+        "password": password,
+        "role": stringToUserRole(role)
+      }
+      const token: string = String(req.headers.token);
+      
+      const result = await this.userBusiness.insert(newUser, token);
+      
+      res.status(200).send(result);
+    } catch (error) {
+      const { statusCode, message } = error;
+      res.status(statusCode || 400).send({ message });
+    }
+  }
   update = async (req: Request, res: Response) => {
     try {
       const { name, password, role } = req.body;

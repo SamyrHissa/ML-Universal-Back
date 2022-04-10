@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ProductBusiness } from "../../business/products/ProductBusiness";
 import { ProductDatabase } from "../../data/ProductDatabase";
+import { insertProductDTO } from "../../model/products/Products.interface";
 import { ProductModel } from "../../model/products/Products.model";
 import { IdGenerator } from "../../services/idGenerator";
 import { TokenGenerator } from "../../services/tokenGenerator";
@@ -37,19 +38,18 @@ export class ProductsController {
     }
     update =async (req: Request, res: Response) => {
         try {
-            const {id, description, sku, unit, price, qty_min, qty_max} = req.body;
+            const id: string = req.params.id;
+            const {description, SKU, unit, price, qty_Min, qty_Max} = req.body;
             const token: string = String(req.headers.authorization);
-            const newProduct = new ProductModel(
-                id,
+            const newProduct: insertProductDTO = {
                 description,
-                sku,
+                SKU,
                 unit,
                 price,
-                qty_min,
-                qty_max,
-                0, new Date(), id, new Date(), new Date()
-            )
-            if(await this.productsBusiness.update(newProduct , token)){
+                qty_Min,
+                qty_Max
+            }
+            if(await this.productsBusiness.update(id, newProduct , token)){
                 res.status(200).send("Data Updated!")
             } else {
                 res.status(412).send("Data not Updated!")
@@ -73,6 +73,17 @@ export class ProductsController {
         } catch (error) {
             const { statusCode, message } = error;
             res.status(statusCode || 400).send({ message });
+        }
+    }
+    find = async (req: Request, res: Response) => {
+        try {
+            const id = req.params.id;
+            const token: string = String(req.headers.authorization);
+            const result = await this.productsBusiness.findById(id, token);
+            res.status(200).send(result);
+        } catch (error) {
+            const { statusCode, message} = error;
+            res.status(statusCode || 400).send({message});
         }
     }
     getAll = async (req:Request, res: Response) => {

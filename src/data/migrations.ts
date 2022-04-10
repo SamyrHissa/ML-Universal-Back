@@ -30,10 +30,10 @@ export const migration = async () => {
             password VARCHAR(64) NOT NULL,
             role VARCHAR(255) NOT NULL DEFAULT "NORMAL",
             status INTEGER,
-            date_status TIMESTAMP,
+            date_Status TIMESTAMP,
             id_User VARCHAR(64) NOT NULL,
-            date_create TIMESTAMP,
-            date_update TIMESTAMP,
+            date_Create TIMESTAMP,
+            date_Update TIMESTAMP,
             FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
          );
 
@@ -68,10 +68,10 @@ export const migration = async () => {
             bairro VARCHAR(50),
             city VARCHAR(50),
             status INTEGER,
-            date_status TIMESTAMP,
+            date_Status TIMESTAMP,
             id_User VARCHAR(64) NOT NULL,
-            date_create TIMESTAMP,
-            date_update TIMESTAMP,
+            date_Create TIMESTAMP,
+            date_Update TIMESTAMP,
             FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
          );
 
@@ -89,10 +89,10 @@ export const migration = async () => {
             bairro VARCHAR(50),
             city VARCHAR(50),
             status INTEGER,
-            date_status TIMESTAMP,
+            date_Status TIMESTAMP,
             id_User VARCHAR(64) NOT NULL,
-            date_create TIMESTAMP,
-            date_update TIMESTAMP,
+            date_Create TIMESTAMP,
+            date_Update TIMESTAMP,
             FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
          );
 
@@ -103,10 +103,10 @@ export const migration = async () => {
             qty DECIMAL (15, 4) NOT NULL,
             price DECIMAL (15, 4) NOT NULL,
             status INTEGER,
-            date_status TIMESTAMP,
+            date_Status TIMESTAMP,
             id_User VARCHAR(64) NOT NULL,
-            date_create TIMESTAMP,
-            date_update TIMESTAMP,
+            date_Create TIMESTAMP,
+            date_Update TIMESTAMP,
             FOREIGN KEY(id_product) REFERENCES ${productsTableName} (id),
             FOREIGN KEY(id_User) REFERENCES ${usersTableName} (id)
          );

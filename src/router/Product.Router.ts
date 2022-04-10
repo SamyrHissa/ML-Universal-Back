@@ -5,8 +5,8 @@ export const productRouter = express.Router();
 const productsController = new ProductsController();
 
 
-productRouter.post("/insert", productsController.insert);
+productRouter.post("/", productsController.insert);
 productRouter.put("/:id", productsController.update);
 productRouter.delete("/:id", productsController.delete);
-productRouter.delete("/:id", productsController.delete);
+productRouter.get("/:id", productsController.find);
 productRouter.get("/getAll", productsController.getAll);

@@ -34,14 +34,14 @@ export class ClientBusiness implements IClietsBusiness {
             newClient.date_Status = new Date();
             newClient.id_User = tokenValidation.id;
             newClient.date_Create = new Date();
-            newClient.date_Update = new Date();
+            // newClient.date_Update = new Date();
             await this.database.insert(newClient);
             return ClienteModel.toClientModel(newClient);
         } catch (error) {
             throw new CustomError(error.statusCode, error.message);
         }
     };
-    update = async (client: insertClientDTO, id: string,  token: string): Promise<boolean> => {
+    update = async (client: insertClientDTO, id: string,  token: string): Promise<ClienteModel> => {
         try {
             const tokenValidation = this.tokenGenerator.getTokenData(token);
             if(!tokenValidation){
@@ -63,8 +63,9 @@ export class ClientBusiness implements IClietsBusiness {
             const ClientUP = ClienteModel.toClientModel(client);
             ClientUP.setId(id);
             ClientUP.setId_User(tokenValidation.id)
+            ClientUP.setDate_Update(new Date());
             const result = await this.database.update(ClientUP);
-            return true;
+            return ClientUP;
         } catch (error) {
             throw new CustomError(error.statusCode, error.message);
         }
@@ -88,7 +89,7 @@ export class ClientBusiness implements IClietsBusiness {
             throw new CustomError(error.statusCode, error.message);
         }
     };
-    findById = async (id:string, token: string): Promise<ClienteModel> => {
+    findById = async (id:string, token: string): Promise<ClienteModel | undefined> => {
         try {
             const tokenValidation = this.tokenGenerator.getTokenData(token);
             if(!tokenValidation){
@@ -97,7 +98,9 @@ export class ClientBusiness implements IClietsBusiness {
             if(tokenValidation.role !== "ADMIN"){
                 throw new CustomError(401, "You are not authorized for this action");
             }
+            
             const exist = await this.database.findById(id);
+            
             return exist;
         } catch (error) {
             throw new CustomError(error.statusCode, error.message);
