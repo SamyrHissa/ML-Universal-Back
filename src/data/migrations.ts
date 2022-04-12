@@ -59,7 +59,7 @@ export const migration = async () => {
             name VARCHAR(255) NOT NULL,
             id_MercadoLivre VARCHAR(255),
             email VARCHAR(255),
-            CPF VARCHAR(10),
+            CPF VARCHAR(11),
             telephone VARCHAR(255),
             CEP VARCHAR(8),
             address VARCHAR(255),
