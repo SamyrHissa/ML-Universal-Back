@@ -22,9 +22,7 @@ export class ClientBusiness implements IClietsBusiness {
             if(tokenValidation.role !== "ADMIN"){
                 throw new CustomError(401, "You are not authorized for this action");
             }
-            if((!client.CEP)||(!client.CPF)||(!client.address)||(!client.bairro)
-            ||(!client.city)||(!client.complemento)||(!client.email)||(!client.id_MercadoLivre)
-            ||(!client.name)||(!client.number)||(!client.telephone)){
+            if((!client.CPF)||(!client.name)){
                 throw new CustomError(412, "Fields requered or falue!");
             }
             const id: string = this.idGenerator.generate();
