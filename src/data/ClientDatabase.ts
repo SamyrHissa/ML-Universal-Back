@@ -62,12 +62,9 @@ export class ClientDatabase extends BaseDataBase {
 
     async delete(id: string): Promise<void> {
         try {
-            // await BaseDataBase.connection.raw(`
-            // DELETE FROM ${this.tableName} WHERE id = "${id}"
-            // `);
             await BaseDataBase.connection(this.tableName)
                 .delete()
-                .where(`WHERE id = ${id}`);
+                .where(`id`, id);
         } catch (error) {
             throw new Error(error.sqlMessage || error.message);
         }
