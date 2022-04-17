@@ -85,10 +85,11 @@ export class ClientsController {
         try {
             const id = req.params.id;
             const token: string = String(req.headers.authorization);
+            
             if(await this.clientsBusiness.delete(id, token)){
                 res.status(200).send("Data deleted!")
             } else {
-                res.status(412).send("Data not deleted//1")
+                res.status(412).send("Data not deleted!")
             }
 
         } catch (error) {
