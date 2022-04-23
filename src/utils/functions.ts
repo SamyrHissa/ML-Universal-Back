@@ -27,6 +27,16 @@ export const addCaracterEsquerdaUmaStr = (str: string, caracter: string, tamanho
     }
     return strAdd.substr(0, tamanho - str.length) + str;
 }
+export const sleep = (delay: number) => {
+    // var start = new Date().getTime();
+    // while (new Date().getTime() < start + delay);
+    
+    const myFunction = (): boolean => {
+        console.log('Pausando a execução');
+        return true
+    }
+    setTimeout(()=>myFunction(), delay);
+}
 export class Function {
     dateStrToDate(dateStr: string) : Date {
         

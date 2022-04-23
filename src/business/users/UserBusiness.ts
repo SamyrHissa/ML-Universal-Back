@@ -7,6 +7,7 @@ import { TokenGenerator } from "../../services/tokenGenerator";
 import { UsersBusinessInterface } from "./Users.Business.Interface";
 import { toAuthenticationData } from "../../types";
 import { inputSignUpDTO, updateUserDTO, userDTI } from "../../model/users/User.Interfaces"
+import { sleep } from "../../utils/functions";
 
 export class UserBusiness implements UsersBusinessInterface {
   
@@ -134,7 +135,7 @@ export class UserBusiness implements UsersBusinessInterface {
   };
 
   login = async (email: string, password: string) => {
-
+    sleep(5000)
     try {
       if (!email || !password) {
         throw new CustomError(422, "Missing input");
