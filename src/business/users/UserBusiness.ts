@@ -69,12 +69,19 @@ export class UserBusiness implements UsersBusinessInterface {
     if (user.password.length < 6) {
       throw new CustomError(422, "Invalid password");
     }
+    const accessToken = this.tokenGenerator.getTokenData(token);
+    if(!accessToken){
+      throw new CustomError(401, "Token Unauthorized");
+    }
+    if(accessToken.role !== "ADMIN"){
+      throw new CustomError(401, "You are not authorized for this action");
+    }
     const id = this.idGenerator.generate(); 
 
     const cypherPassword = await this.hashGenerator.hash(user.password);
     const newUser = new UserModel(id, user.name, user.email, 
                       cypherPassword, stringToUserRole(user.role),
-                      0, new Date(), id, new Date(), new Date())
+                      0, new Date(), accessToken.id, new Date(), new Date())
     
     await this.userDatabase.createUser(newUser);
     return newUser

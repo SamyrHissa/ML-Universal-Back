@@ -28,7 +28,6 @@ export class UserDatabase extends BaseDataBase {
 
    public async createUser(user: UserModel): Promise<void> {
       try {
-         
          const command = `
          INSERT INTO ${this.tableName} (id, name, email, password, role,
             status, date_status, id_user, date_create, date_update

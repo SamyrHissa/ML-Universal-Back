@@ -46,7 +46,7 @@ export default class UserController {
         "password": password,
         "role": stringToUserRole(role)
       }
-      const token: string = String(req.headers.token);
+      const token: string = String(req.headers.authorization);
       
       const result = await this.userBusiness.insert(newUser, token);
       
@@ -81,9 +81,9 @@ export default class UserController {
       const id = req.params.id;
       const token: string = String(req.headers.authorization);
       if(await this.userBusiness.delete(id, token)){
-        res.status(200).send("Data Updated!")
+        res.status(200).send("Data Deleted!")
       } else {
-          res.status(412).send("Data not Updated!")
+          res.status(412).send("Data not Deleted!")
       }
     } catch (error) {
       const { statusCode, message } = error;
